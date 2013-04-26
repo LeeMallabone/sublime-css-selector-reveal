@@ -8,7 +8,14 @@ class CSSSelectorReveal(sublime_plugin.EventListener):
 
         # See if the user has selected the end of a CSS rule
         for region in view.sel():
-            if view.substr(region) == '}':
+            if region.empty():
+                after_char = sublime.Region(region.begin() - 1, region.end())
+                before_char = sublime.Region(region.begin(), region.end() + 1)
+                if view.substr(before_char) == '}':
+                    latest_close_brace = before_char
+                elif view.substr(after_char) == '}':
+                    latest_close_brace = after_char
+            elif view.substr(region) == '}':
                 latest_close_brace = region
 
         # Look for a matching opening brace and show a status.
